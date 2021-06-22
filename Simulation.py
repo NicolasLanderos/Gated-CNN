@@ -111,7 +111,7 @@ def Sim_Conv(Input_dim, Output_dim_V ,Output_dim_H, Input_channels, Stride, Kern
 		# Get and write new activation
 		for lidx,hidx in zip(low_idx, high_idx):
 			out = layer_outputs[lidx:hidx]
-			bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int8),word_size)
+			bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int32),word_size)
 			data_buffer_p[lidx*word_size:lidx*word_size + len(bin_data)] = bin_data
 	# traspasar residuos
 	duty_p[:limit] += duty_tmp
@@ -149,7 +149,7 @@ def Sim_DWConv(Input_dim, Output_dim_V ,Output_dim_H, Input_channels, Stride, Ke
 				contador = 0
 			# Get and write new activation
 			out = layer_outputs[low_idx[0]:high_idx[0]]
-			bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int8),word_size)
+			bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int32),word_size)
 			data_buffer_p[low_idx[0]*word_size:low_idx[0]*word_size + len(bin_data)] = bin_data
 		# traspasar residuos
 		duty_p[low_limit:high_limit] += duty_tmp
@@ -175,7 +175,7 @@ def Sim_FC(Input_dim, Output_dim, layer_outputs, data_buffer_p, duty_p, data_buf
 		#update_duty[blockspergrid, threadsperblock](data_buffer_p,duty_p,Flow_Data['latencia'])
 		duty_p[data_buffer_p==1] += Flow_Data['latencia']
 		out = layer_outputs[0,packet:packet + Flow_Data['columnas_usadas']]
-		bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int8),word_size)
+		bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int32),word_size)
 		data_buffer_p[packet*word_size:packet*word_size + len(bin_data)] = bin_data
 	duty_s[data_buffer_s==1] += ciclos
 	return ciclos
@@ -195,7 +195,7 @@ def Sim_Input_and_Pooling(Activaciones_por_ciclo, N_act, layer_outputs, data_buf
 			duty_tmp[:] = 0
 			contador = 0
 		out = layer_outputs[packet:packet + Activaciones_por_ciclo]
-		bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int8),word_size)
+		bin_data = intarr_to_binarr(np.floor(out*2**frac_size).astype(np.int32),word_size)
 		data_buffer_p[packet*word_size:packet*word_size + len(bin_data)] = bin_data
 	duty_p[:limit] += duty_tmp
 	if limit < duty_p.size:
@@ -212,79 +212,78 @@ def get_all_outputs(model, input_data, learning_phase=False):
 
 
 
-def AlexNet_Sim(model,imagen,data_buffer_1,duty_1,data_buffer_2,duty_2,word_size,frac_size):
+def AlexNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_size,frac_size):
 	#print("inicia simulacion")
-	activaciones = get_all_outputs(model,imagen)
 	ciclos = 0
 	#print("Input")
 	#start = timer()
-	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 154587, layer_outputs = np.swapaxes(np.swapaxes(activaciones[2],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 154587, layer_outputs = np.swapaxes(np.swapaxes(activaciones[0],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=227, Output_dim_V=55, Output_dim_H = 55, Input_channels=3, Stride=4, Kernel_size=11, N_Filtros=96, layer_outputs = np.swapaxes(np.swapaxes(activaciones[8],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Conv(Input_dim=227, Output_dim_V=55, Output_dim_H = 55, Input_channels=3, Stride=4, Kernel_size=11, N_Filtros=96, layer_outputs = np.swapaxes(np.swapaxes(activaciones[1],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa MP")
-	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 69984, layer_outputs = np.swapaxes(np.swapaxes(activaciones[10],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 69984, layer_outputs = np.swapaxes(np.swapaxes(activaciones[2],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=31, Output_dim_V=27, Output_dim_H = 27, Input_channels=96, Stride=1, Kernel_size=5, N_Filtros=256, layer_outputs = np.swapaxes(np.swapaxes(activaciones[16],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Conv(Input_dim=31, Output_dim_V=27, Output_dim_H = 27, Input_channels=96, Stride=1, Kernel_size=5, N_Filtros=256, layer_outputs = np.swapaxes(np.swapaxes(activaciones[3],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa MP")
-	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 43264, layer_outputs = np.swapaxes(np.swapaxes(activaciones[18],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 43264, layer_outputs = np.swapaxes(np.swapaxes(activaciones[4],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=15, Output_dim_V=13, Output_dim_H = 13, Input_channels=256, Stride=1, Kernel_size=3, N_Filtros=384, layer_outputs = np.swapaxes(np.swapaxes(activaciones[24],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Conv(Input_dim=15, Output_dim_V=13, Output_dim_H = 13, Input_channels=256, Stride=1, Kernel_size=3, N_Filtros=384, layer_outputs = np.swapaxes(np.swapaxes(activaciones[5],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=13, Output_dim_V=13, Output_dim_H = 13, Input_channels=384, Stride=1, Kernel_size=1, N_Filtros=384, layer_outputs = np.swapaxes(np.swapaxes(activaciones[30],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Conv(Input_dim=13, Output_dim_V=13, Output_dim_H = 13, Input_channels=384, Stride=1, Kernel_size=1, N_Filtros=384, layer_outputs = np.swapaxes(np.swapaxes(activaciones[6],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=13, Output_dim_V=13, Output_dim_H = 13, Input_channels=384, Stride=1, Kernel_size=1, N_Filtros=256, layer_outputs = np.swapaxes(np.swapaxes(activaciones[36],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Conv(Input_dim=13, Output_dim_V=13, Output_dim_H = 13, Input_channels=384, Stride=1, Kernel_size=1, N_Filtros=256, layer_outputs = np.swapaxes(np.swapaxes(activaciones[7],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa MP")
-	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 9216, layer_outputs = np.swapaxes(np.swapaxes(activaciones[38],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 9216, layer_outputs = np.swapaxes(np.swapaxes(activaciones[8],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa FC")
-	ciclos += Sim_FC(Input_dim=9216, Output_dim=4096, layer_outputs= activaciones[44], word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_FC(Input_dim=9216, Output_dim=4096, layer_outputs= activaciones[9], word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_2, duty_p = duty_2,
 					data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa FC")
-	ciclos += Sim_FC(Input_dim=4096, Output_dim=4096, layer_outputs= activaciones[49], word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_FC(Input_dim=4096, Output_dim=4096, layer_outputs= activaciones[10], word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_1, duty_p = duty_1,
 					data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print(timer()-start)
 	#start = timer()
 	#print("Capa FC")
-	ciclos += Sim_FC(Input_dim=4096, Output_dim=10,layer_outputs= activaciones[54], word_size = word_size, frac_size = frac_size,
+	ciclos += Sim_FC(Input_dim=4096, Output_dim=10,layer_outputs= activaciones[11], word_size = word_size, frac_size = frac_size,
 					data_buffer_p = data_buffer_2, duty_p = duty_2,
 					data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print(timer()-start)
@@ -712,4 +711,82 @@ def MobileNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_si
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[29],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
+	return ciclos
+
+def ZFNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_size,frac_size):
+	#print("inicia simulacion")
+	ciclos = 0
+	#print("Input")
+	#start = timer()
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 150528, layer_outputs = np.swapaxes(np.swapaxes(activaciones[0],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_1, duty_p = duty_1, 
+					data_buffer_s = data_buffer_2, duty_s = duty_2)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa Convolucional")
+	ciclos += Sim_Conv(Input_dim=224, Output_dim_V=109, Output_dim_H = 109, Input_channels=3, Stride=2, Kernel_size=7, N_Filtros=96, layer_outputs = np.swapaxes(np.swapaxes(activaciones[1],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
+					  data_buffer_s = data_buffer_1, duty_s = duty_1)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa MP")
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 279936, layer_outputs = np.swapaxes(np.swapaxes(activaciones[2],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_1, duty_p = duty_1, 
+					data_buffer_s = data_buffer_2, duty_s = duty_2)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa Convolucional")
+	ciclos += Sim_Conv(Input_dim=57, Output_dim_V=27, Output_dim_H = 27, Input_channels=96, Stride=2, Kernel_size=5, N_Filtros=256, layer_outputs = np.swapaxes(np.swapaxes(activaciones[3],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
+					  data_buffer_s = data_buffer_1, duty_s = duty_1)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa MP")
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 43264, layer_outputs = np.swapaxes(np.swapaxes(activaciones[4],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_1, duty_p = duty_1, 
+					data_buffer_s = data_buffer_2, duty_s = duty_2)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa Convolucional")
+	ciclos += Sim_Conv(Input_dim=15, Output_dim_V=13, Output_dim_H = 13, Input_channels=256, Stride=1, Kernel_size=3, N_Filtros=384, layer_outputs = np.swapaxes(np.swapaxes(activaciones[5],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
+					  data_buffer_s = data_buffer_1, duty_s = duty_1)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa Convolucional")
+	ciclos += Sim_Conv(Input_dim=15, Output_dim_V=13, Output_dim_H = 13, Input_channels=384, Stride=1, Kernel_size=3, N_Filtros=384, layer_outputs = np.swapaxes(np.swapaxes(activaciones[6],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
+					  data_buffer_s = data_buffer_2, duty_s = duty_2)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa Convolucional")
+	ciclos += Sim_Conv(Input_dim=15, Output_dim_V=13, Output_dim_H = 13, Input_channels=384, Stride=1, Kernel_size=3, N_Filtros=256, layer_outputs = np.swapaxes(np.swapaxes(activaciones[7],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
+					  data_buffer_s = data_buffer_1, duty_s = duty_1)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa MP")
+	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 9216, layer_outputs = np.swapaxes(np.swapaxes(activaciones[8],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_1, duty_p = duty_1, 
+					data_buffer_s = data_buffer_2, duty_s = duty_2)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa FC")
+	ciclos += Sim_FC(Input_dim=9216, Output_dim=4096, layer_outputs= activaciones[9], word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_2, duty_p = duty_2,
+					data_buffer_s = data_buffer_1, duty_s = duty_1)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa FC")
+	ciclos += Sim_FC(Input_dim=4096, Output_dim=4096, layer_outputs= activaciones[10], word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_1, duty_p = duty_1,
+					data_buffer_s = data_buffer_2, duty_s = duty_2)
+	#print(timer()-start)
+	#start = timer()
+	#print("Capa FC")
+	ciclos += Sim_FC(Input_dim=4096, Output_dim=10,layer_outputs= activaciones[11], word_size = word_size, frac_size = frac_size,
+					data_buffer_p = data_buffer_2, duty_p = duty_2,
+					data_buffer_s = data_buffer_1, duty_s = duty_1)
+	#print(timer()-start)
+	#start = timer()
 	return ciclos

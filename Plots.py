@@ -158,7 +158,7 @@ def plot_duty(duty, ciclos, title, fig_dir, bits_dist, low, high, mode = 'Duty',
 
 
 #DataDicts Structure: Errortype->Buffer->Section->ErrorNumber
-def Plot_Errors(DataDicts, Sections, keys1, keys2, OgValue, figsize, xlabel, Scaled_max_value=False, save_fig=False, fig_dir = '', BoxPlot = False):
+def Plot_Errors(DataDicts, Sections, keys1, keys2, OgValue, figsize, xlabel, Scaled_max_value=False, save_fig=False, fig_dir = '', BoxPlot = False, ylabel='Loss'):
 	cols = len(DataDicts)
 
 	fig = plt.figure(constrained_layout=True, figsize=figsize)
@@ -173,15 +173,16 @@ def Plot_Errors(DataDicts, Sections, keys1, keys2, OgValue, figsize, xlabel, Sca
 		for row in range(rows):
 			for col in range(cols):
 				Dict = DataDicts[keys1[col]][keys2[subfig_index]][Sections[subfig_index][row]]
-				axs[row,col].set_title(Sections[subfig_index][row]+', Error Type: static 1 in bit: '+str(col+1), fontsize=14)
+				axs[row,col].set_title(Sections[subfig_index][row]+', Error Type: static 1 in: '+keys1[col], fontsize=14)
 				axs[row,col].set_xlabel(xlabel, fontsize = 13)
-				axs[row,col].set_ylabel('Loss',fontsize=13)
+				axs[row,col].set_ylabel(ylabel,fontsize=13)
 
 				if BoxPlot:
 					labels, data = Dict.keys(), Dict.values()        
 					axs[row,col].boxplot(data)
 					axs[row,col].set_xticks(range(1, len(labels) + 1))
 					axs[row,col].set_xticklabels(labels)
+					axs[row,col].axhline(y=OgValue,linewidth=1, color='g')
 				else:
 					Dict = {str(k):   Dict[k]   for k in Dict}
 					Dict = {k: np.mean(Dict[k]) for k in Dict}
