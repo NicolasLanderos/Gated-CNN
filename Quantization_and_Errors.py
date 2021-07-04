@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.keras import backend as K
 import gc
-from Nets import Quantization_layer, AlexNet_body, VGG16_body, PilotNet_model, MobileNet_body, ZFNet_body
+from Nets import Quantization_layer, AlexNet_body, VGG16_body, PilotNet_model, MobileNet_body, ZFNet_body, SqueezeNet_body
 
 
 def Weight_Quantization(model, Frac_Bits, Int_Bits):
@@ -29,6 +29,9 @@ def Check_Accuracy_and_Loss(model, test_dataset, Wgt_dir, Afrac_size, Aint_size,
                                     Errors = Layer_Error_mask, locations = locations, errors = errors, Bs = Bs)
     elif model == 'ZF':
         Qoutput_layer = ZFNet_body(Qinput_layer, Quantization = True, N_labels = N_labels, word_size = (1+Aint_size+Afrac_size), frac_size = Afrac_size,
+                                    Errors = Layer_Error_mask, locations = locations, errors = errors, Bs = Bs)
+    elif model == 'Squeeze':
+        Qoutput_layer = SqueezeNet_body(Qinput_layer, Quantization = True, N_labels = N_labels, word_size = (1+Aint_size+Afrac_size), frac_size = Afrac_size,
                                     Errors = Layer_Error_mask, locations = locations, errors = errors, Bs = Bs)
     else:
         return None

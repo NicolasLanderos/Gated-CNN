@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.layers import Conv2D, Dense, BatchNormalization, MaxPool2D, Flatten, Dropout, Lambda, Cropping2D, GlobalAveragePooling2D, Reshape, Activation, ZeroPadding2D, ReLU, DepthwiseConv2D
+from tensorflow.keras.layers import Conv2D, Dense, BatchNormalization, MaxPool2D, Flatten, Dropout, Lambda, Cropping2D, GlobalAveragePooling2D, Reshape, Activation, ZeroPadding2D, ReLU, DepthwiseConv2D, Concatenate
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras import backend as K
 
@@ -533,4 +533,81 @@ def ZFNet_body(input_layer, N_labels, locations = [], errors = [], Quantization 
 	x  = Lambda(Quantization_layer, arguments = QArguments , name='Qscores')(x)
 	x  = Activation(activation='softmax', name='predictions')(x)
 	x  = Lambda(Quantization_layer, arguments = QArguments , name='Qpredictions')(x)
+	return x
+
+#ZFNet
+def SqueezeNet_body(input_layer, N_labels, locations = [], errors = [], Quantization = True, Errors = True, word_size=None, frac_size=None, Bs = 1):
+	if Errors == True:
+		Errors = [True]*22
+	elif Errors == False:
+		Errors = [False]*22
+
+	QArguments = {'Active':Quantization,'word_size':word_size, 'frac_size':frac_size}
+	Shapes = [(224,224,3),(112,112,96),(56,56,96),(56,56,16),(56,56,128),(56,56,16),(56,56,128),(56,56,32),(56,56,256),(28,28,256),(28,28,32),(28,28,256),
+			  (28,28,48),(28,28,384),(28,28,48),(28,28,384),(28,28,64),(28,28,512),(14,14,512),(14,14,64),(14,14,512),(14,14,N_labels)]
+
+
+	def Fire_Block(inputs, fs, fe, block_id, index):
+		#Squeeze
+		s = Conv2D(fs, 1, activation='relu', name='Squeeze.%d' % block_id)(inputs)
+		s = Lambda(Quantization_layer, arguments = QArguments , name='Squeeze.%d/Quantizated' % block_id)(s)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index],Bs = Bs)
+		s = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index]),
+											 'word_size':word_size, 'frac_size':frac_size}, name='Squeeze.%d/Error' % block_id)(s)
+		#Expand
+		e1 = Conv2D(fe, 1, activation='relu', name='Expand1x1.%d' % block_id)(s)
+		e3 = Conv2D(fe, 3, activation='relu', padding = 'same', name='Expand3x3.%d' % block_id)(s)
+		e  = Concatenate(name='Expand.%d' % block_id)([e1,e3])
+		e = Lambda(Quantization_layer, arguments = QArguments , name='Expand.%d/Quantizated' % block_id)(e)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index+1],Bs = Bs)
+		e = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index+1]),
+											 'word_size':word_size, 'frac_size':frac_size}, name='Expand.%d/Error' % block_id)(e)
+		return e
+
+	def Conv_Block(inputs, filters, kernel_size, strides=(1,1), padding='valid', activation=None, block_id=None, index=None):
+		x = Conv2D(filters, kernel_size, strides, padding, activation = activation,  name='Conv.%d' % block_id)(inputs)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='Conv.%d/Quantizated' % block_id)(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index],Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index]),
+											 'word_size':word_size, 'frac_size':frac_size}, name='Conv.%d/Error' % block_id)(x)
+		return x
+
+	def MaxPool_Block(inputs, pool_size=(2,2), strides=None, padding='valid', block_id=None, index=None):
+		x = MaxPool2D(pool_size,strides,padding, name='MaxPool.%d' % block_id)(inputs)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index],Bs = Bs)
+		x  = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList),'Active': tf.identity(is_Empty and Errors[index]),
+											  'word_size':word_size, 'frac_size':frac_size}, name='MaxPool.%d/Error' % block_id)(x)
+		return x
+
+	def Input_Block(inputs,index):
+		x  = Lambda(Quantization_layer, arguments = QArguments, name = 'Input/Quantizated')(inputs)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index],Bs = Bs)
+		x  = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList),'Active': tf.identity(is_Empty and Errors[index]),
+											  'word_size':word_size, 'frac_size':frac_size}, name = 'Input/Error')(x)
+		return x
+
+	def Output_Block(inputs):
+		x  = GlobalAveragePooling2D(name='GAP')(inputs)
+		x  = Lambda(Quantization_layer, arguments = QArguments, name = 'GAP/Quantizated')(x)
+		x  = tf.keras.activations.softmax(x)
+		x  = Lambda(Quantization_layer, arguments = QArguments, name = 'Output/Quantizated')(x)
+		return x
+
+
+
+	x  = Input_Block(input_layer,0)
+	x  = Conv_Block(x,96,7,2,'same','relu',1,1)
+	x  = MaxPool_Block(x,3,2,'same',1,2)
+	x  = Fire_Block(x, 16, 64, 1, 3)
+	x  = Fire_Block(x, 16, 64, 2, 5)
+	x  = Fire_Block(x, 32, 128, 3, 7)
+	x  = MaxPool_Block(x,3,2,'same',2,9)
+	x  = Fire_Block(x, 32, 128, 4, 10)
+	x  = Fire_Block(x, 48, 192, 5, 12)
+	x  = Fire_Block(x, 48, 192, 6, 14)
+	x  = Fire_Block(x, 64, 256, 7, 16)
+	x  = MaxPool_Block(x,3,2,'same',3,18)
+	x  = Fire_Block(x, 64, 256, 8, 19)
+	x  = Conv_Block(x,N_labels,1, block_id=2,index=21)
+	x  = Output_Block(x)
 	return x
