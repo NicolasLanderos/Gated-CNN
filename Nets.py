@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.layers import Conv2D, Dense, BatchNormalization, MaxPool2D, Flatten, Dropout, Lambda, Cropping2D, GlobalAveragePooling2D, Reshape, Activation, ZeroPadding2D, ReLU, DepthwiseConv2D, Concatenate
+from tensorflow.keras.layers import Conv2D, Dense, BatchNormalization, MaxPool2D, Flatten, Dropout, Lambda, Cropping2D, GlobalAveragePooling2D, Reshape, Activation, ZeroPadding2D, ReLU, DepthwiseConv2D, Concatenate, AveragePooling2D, Embedding, Conv1D, MaxPooling1D
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras import backend as K
 
@@ -66,7 +66,7 @@ def generate_position_list(positions,errors,Conv=False,Shape=(None,None,None),Bs
 	Plist = []
 	Elist = []
 	is_empty = True
-	if Conv:
+	if Conv==True:
 		for index in range(Bs):
 			for position,error in zip(positions,errors):
 				if position < Shape[0]*Shape[1]*Shape[2] - 1:
@@ -74,6 +74,14 @@ def generate_position_list(positions,errors,Conv=False,Shape=(None,None,None),Bs
 					row      = (position - act_map*Shape[0]*Shape[1])//Shape[1]
 					col      = position - act_map*Shape[0]*Shape[1] - row*Shape[1]
 					Plist.append([index,row,col,act_map])
+					Elist.append(decode_mask(error))
+	elif Conv=='Text':
+		for index in range(Bs):
+			for position,error in zip(positions,errors):
+				if position < Shape[0]*Shape[1] - 1:
+					Ch1  = position//Shape[0]
+					Ch2  = (position - Ch1*Shape[0])//Shape[1]
+					Plist.append([index,Ch1,Ch2])
 					Elist.append(decode_mask(error))
 	else:
 		for index in range(Bs):
@@ -593,8 +601,6 @@ def SqueezeNet_body(input_layer, N_labels, locations = [], errors = [], Quantiza
 		x  = Lambda(Quantization_layer, arguments = QArguments, name = 'Output/Quantizated')(x)
 		return x
 
-
-
 	x  = Input_Block(input_layer,0)
 	x  = Conv_Block(x,96,7,2,'same','relu',1,1)
 	x  = MaxPool_Block(x,3,2,'same',1,2)
@@ -610,4 +616,196 @@ def SqueezeNet_body(input_layer, N_labels, locations = [], errors = [], Quantiza
 	x  = Fire_Block(x, 64, 256, 8, 19)
 	x  = Conv_Block(x,N_labels,1, block_id=2,index=21)
 	x  = Output_Block(x)
+	return x
+
+def DenseNet_body(input_layer, N_labels, locations = [], errors = [], Quantization = True, Errors = True, word_size=None, frac_size=None, Bs = 1):
+
+	Shapes = [(224,224,3),(112,112,64), # Initial Block
+			  (56,56,64),(56,56,128),   # Dense Block 1
+			  (56,56,96),(56,56,128),
+			  (56,56,128),(56,56,128),
+			  (56,56,160),(56,56,128),
+			  (56,56,192),(56,56,128),
+			  (56,56,224),(56,56,128),
+			  (56,56,256),(56,56,128),  # Transition Block 1
+			  (28,28,128),(28,28,128),  # Dense Block 2
+			  (28,28,160),(28,28,128),
+			  (28,28,192),(28,28,128),
+			  (28,28,224),(28,28,128),
+			  (28,28,256),(28,28,128),
+			  (28,28,288),(28,28,128),
+			  (28,28,320),(28,28,128),
+			  (28,28,352),(28,28,128),
+			  (28,28,384),(28,28,128),
+			  (28,28,416),(28,28,128),
+			  (28,28,448),(28,28,128),
+			  (28,28,480),(28,28,128),
+			  (28,28,512),(28,28,256),  # Transition Block 2
+			  (14,14,256),(14,14,128),  # Dense Block 3
+			  (14,14,288),(14,14,128),
+			  (14,14,320),(14,14,128),
+			  (14,14,352),(14,14,128),
+			  (14,14,384),(14,14,128),
+			  (14,14,416),(14,14,128),
+			  (14,14,448),(14,14,128),
+			  (14,14,480),(14,14,128),
+			  (14,14,512),(14,14,128),
+			  (14,14,544),(14,14,128),
+			  (14,14,576),(14,14,128),
+			  (14,14,608),(14,14,128),
+			  (14,14,640),(14,14,128),
+			  (14,14,672),(14,14,128),
+			  (14,14,704),(14,14,128),
+			  (14,14,736),(14,14,128),
+			  (14,14,768),(14,14,128),
+			  (14,14,800),(14,14,128),
+			  (14,14,832),(14,14,128),
+			  (14,14,864),(14,14,128),
+			  (14,14,896),(14,14,128),
+			  (14,14,928),(14,14,128),
+			  (14,14,960),(14,14,128),
+			  (14,14,992),(14,14,128),
+			  (14,14,1024),(14,14,512), # Transition Block 3
+			  (7,7,512),(7,7,128),      # Dense Block 3
+			  (7,7,544),(7,7,128), 
+			  (7,7,576),(7,7,128),
+			  (7,7,608),(7,7,128),
+			  (7,7,640),(7,7,128),
+			  (7,7,672),(7,7,128),
+			  (7,7,704),(7,7,128),
+			  (7,7,736),(7,7,128),
+			  (7,7,768),(7,7,128),
+			  (7,7,800),(7,7,128),
+			  (7,7,832),(7,7,128),
+			  (7,7,864),(7,7,128),
+			  (7,7,896),(7,7,128),
+			  (7,7,928),(7,7,128),
+			  (7,7,960),(7,7,128),
+			  (7,7,992),(7,7,128), 
+			  (7,7,1024),1024]
+
+	def DenseNet_Initial_Block(inputs, index):
+		x = Lambda(Quantization_layer, arguments = QArguments , name='Input/Quantization')(inputs)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index]),
+			'word_size':word_size, 'frac_size':frac_size}, name='Input/Error')(x)
+		x = ZeroPadding2D(padding=((3, 3), (3, 3)), name='Conv/Padding')(x)
+		x = Conv2D(64, 7, strides = 2, use_bias = False, name='Conv')(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='Conv0/Quantization')(x)
+		x = BatchNormalization(epsilon=1.001e-5, name='BatchNormalization0')(x)
+		x = ReLU(name='Relu0')(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='BatchNormalization0/Quantization')(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index+1], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index+1]),
+			'word_size':word_size, 'frac_size':frac_size}, name='BatchNormalization0/Error')(x)
+		x = ZeroPadding2D(padding=((1, 1), (1, 1)),name='Pooling0/Padding')(x)
+		x = MaxPool2D(3, strides=2, name='Pooling0')(x)
+		return x
+
+	def Conv_block(inputs, growth_rate, Dense_id, block_id, index):
+		x = BatchNormalization(epsilon=1.001e-5,name = 'DenseBlock%d.%d_BatchNorm1' % (Dense_id,block_id))(inputs)
+		x = ReLU(name = 'DenseBlock%d.%d_Relu1' % (Dense_id,block_id))(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='DenseBlock%d.%d_BN1/Quantization' % (Dense_id,block_id))(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index]),
+			'word_size':word_size, 'frac_size':frac_size}, name='DenseBlock%d.%d_BN1/Error' % (Dense_id,block_id))(x)
+		x = Conv2D(4 * growth_rate, 1, use_bias=False, name='DenseBlock%d.%d_Conv1x1' % (Dense_id,block_id))(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='DenseBlock%d.%d_Conv1x1/Quantization' % (Dense_id,block_id))(x)
+		x = BatchNormalization(epsilon=1.001e-5, name='DenseBlock%d.%d_BatchNorm2' % (Dense_id,block_id))(x)
+		x = ReLU(name='DenseBlock%d.%d_Relu2' % (Dense_id,block_id))(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='DenseBlock%d.%d_BN2/Quantization' % (Dense_id,block_id))(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index+1], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index+1]),
+			'word_size':word_size, 'frac_size':frac_size}, name='DenseBlock%d.%d_BN2/Error' % (Dense_id,block_id))(x)
+		x = Conv2D(growth_rate, 3, padding='same', use_bias=False, name='DenseBlock%d.%d_Conv3x3' % (Dense_id,block_id))(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='DenseBlock%d.%d_Conv3x3/Quantization' % (Dense_id,block_id))(x)
+		o = Concatenate(name = 'DenseBlock%d.%d_Concatenation' % (Dense_id,block_id))([inputs, x])
+		return o
+
+	def Dense_Block(x, blocks, block_id, index):
+		for i in range(blocks):
+			x = Conv_block(x, 32, Dense_id = block_id, block_id = i, index = index+2*i )
+		return x
+
+	def Transition_Block(x, reduction, block_id, index):
+		x = BatchNormalization(epsilon=1.001e-5, name= 'TransitionBlock%d_BatchNorm' % block_id)(x)
+		x = ReLU(name = 'TransitionBlock%d_Relu' % block_id)(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='TransitionBlock%d_BN/Quantization' % block_id)(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index]),
+			'word_size':word_size, 'frac_size':frac_size}, name='TransitionBlock%d_BN/Error' % block_id)(x)
+		x = Conv2D(int(K.int_shape(x)[-1] * 0.5), 1, use_bias=False, name = 'TransitionBlock%d_Conv' % block_id)(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='TransitionBlock%d_Conv/Quantization' % block_id)(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index+1], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index+1]),
+			'word_size':word_size, 'frac_size':frac_size}, name='TransitionBlock%d_Conv/Error' % block_id)(x)
+		x = AveragePooling2D(2, strides=2, name= 'TransitionBlock%d_AvgPooling' % block_id)(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='TransitionBlock%d_Pool/Quantization' % block_id)(x)
+		return x
+
+	def Output_Block(inputs,index):
+		x = BatchNormalization(epsilon=1.001e-5, name='OutputBlock_BatchNormalization')(inputs)
+		x = ReLU(name = 'Output_Block/Relu')(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='OutputBlock_BN/Quantization')(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv=True,Shape=Shapes[index], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index]),
+			'word_size':word_size, 'frac_size':frac_size}, name='OutputBlock_BN/Error')(x)
+		x = GlobalAveragePooling2D(name='GAP')(x)
+		x = Lambda(Quantization_layer, arguments = QArguments , name='GAP/Quantization')(x)
+		PosList,ErrList,is_Empty = generate_position_list(locations,errors,Shape=Shapes[index+1], Bs = Bs)
+		x = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList), 'Active': tf.identity(is_Empty and Errors[index+1]),
+			'word_size':word_size, 'frac_size':frac_size}, name='GAP/Error')(x)
+		x = Dense(N_labels, name='OutputScores')(x)
+		x = Lambda(Quantization_layer, arguments = QArguments, name = 'Output-Scores/Quantization')(x)
+		x = tf.keras.activations.softmax(x)
+		x = Lambda(Quantization_layer, arguments = QArguments, name = 'Output/Quantization')(x)
+		return x
+
+	if Errors == True:
+		Errors = [True]*126
+	elif Errors == False:
+		Errors = [False]*126
+
+	QArguments = {'Active':Quantization,'word_size':word_size, 'frac_size':frac_size}
+
+	x = DenseNet_Initial_Block(input_layer, 0)
+	x = Dense_Block(x, 6, 1, 2)
+	x = Transition_Block(x, 0.5, 1, 14)
+	x = Dense_Block(x, 12, 2, 16)
+	x = Transition_Block(x, 0.5, 2, 40)
+	x = Dense_Block(x, 24, 3, 42)
+	x = Transition_Block(x, 0.5, 3, 90)
+	x = Dense_Block(x, 16, 4, 92)
+	x = Output_Block(x,124)
+	return x
+
+
+#SentimentalModel
+def Sentimental_body(input_layer, N_labels,  top_words, max_words, locations = [], errors = [], Quantization = True, Errors = True, word_size=None, frac_size=None, Bs = 1):
+	if Errors == True:
+		Errors = [True]*4
+	elif Errors == False:
+		Errors = [False]*4
+
+	QArguments = {'Active':Quantization,'word_size':word_size, 'frac_size':frac_size}
+
+	#Embbedding
+	x = Embedding(top_words, 32, input_length=max_words)(input_layer)
+	x = Lambda(Quantization_layer, arguments = QArguments )(x)
+	PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv='Text',Shape=(max_words,32),Bs = Bs)
+	x  = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList),'Active': tf.identity(is_Empty and Errors[0]),'word_size':word_size, 'frac_size':frac_size})(x)
+	x = Conv1D(filters=32, kernel_size=3, padding='same', activation='relu')(x)
+	x = Lambda(Quantization_layer, arguments = QArguments )(x)
+	PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv='Text',Shape=(max_words,32),Bs = Bs)
+	x  = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList),'Active': tf.identity(is_Empty and Errors[1]),'word_size':word_size, 'frac_size':frac_size})(x)
+	x = MaxPooling1D(pool_size=2)(x)
+	x = Lambda(Quantization_layer, arguments = QArguments )(x)
+	PosList,ErrList,is_Empty = generate_position_list(locations,errors,Conv='Text',Shape=(max_words/2,32),Bs = Bs)
+	x  = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList),'Active': tf.identity(is_Empty and Errors[2]),'word_size':word_size, 'frac_size':frac_size})(x)
+	x = Flatten()(x)
+	x = Dense(250, activation='relu')(x)
+	x = Lambda(Quantization_layer, arguments = QArguments )(x)
+	PosList,ErrList,is_Empty = generate_position_list(locations,errors,Shape=250,Bs = Bs)
+	x  = Lambda(Error_layer, arguments = {'position_list' : tf.identity(PosList),'error_list' : tf.identity(ErrList),'Active': tf.identity(is_Empty and Errors[3]),'word_size':word_size, 'frac_size':frac_size})(x)
+	x = Dense(1, activation='sigmoid')(x)
 	return x
