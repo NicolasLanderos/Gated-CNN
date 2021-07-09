@@ -95,7 +95,7 @@ def Sim_Conv(Input_dim, Output_dim_V ,Output_dim_H, Input_channels, Stride, Kern
 	LIL,HIL,CL = generate_List(Output_dim_V,Output_dim_H,N_Filtros,Maepc,Flow_Data['grado_paralelismo_usado'],Flow_Data['latencia'],Flow_Data['ciclos_disponibles'])
 	# Tamaño del trozo de buffer usado (en bits)
 	limit = max(max(HIL))*word_size
-	duty_tmp = np.zeros(duty_p[:limit].size,dtype=np.uint16)
+	duty_tmp = np.zeros(duty_p[0:limit].size,dtype=np.uint16)
 	blockspergrid = (duty_tmp.size + (threadsperblock - 1)) // threadsperblock
 	contador = 0
 	for cycles, low_idx, high_idx in zip(CL, LIL, HIL):
@@ -648,7 +648,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=16, Stride=1, Kernel_size=3, N_Filtros=64, offset = 200704,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=16, Stride=1, Kernel_size=3, N_Filtros=64, offset = 200704,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[5],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -664,7 +664,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=16, Stride=1, Kernel_size=3, N_Filtros=64, offset = 200704,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=16, Stride=1, Kernel_size=3, N_Filtros=64, offset = 200704,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[8],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -680,7 +680,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=32, Stride=1, Kernel_size=3, N_Filtros=128, offset = 401408,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=32, Stride=1, Kernel_size=3, N_Filtros=128, offset = 401408,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[11],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -701,7 +701,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=32, Stride=1, Kernel_size=3, N_Filtros=128, offset = 100352,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=32, Stride=1, Kernel_size=3, N_Filtros=128, offset = 100352,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[15],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -717,7 +717,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=48, Stride=1, Kernel_size=3, N_Filtros=192, offset = 150528,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=48, Stride=1, Kernel_size=3, N_Filtros=192, offset = 150528,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[18],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -733,7 +733,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=48, Stride=1, Kernel_size=3, N_Filtros=192, offset = 150528,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=48, Stride=1, Kernel_size=3, N_Filtros=192, offset = 150528,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[21],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -749,7 +749,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=64, Stride=1, Kernel_size=3, N_Filtros=256, offset = 200704,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=64, Stride=1, Kernel_size=3, N_Filtros=256, offset = 200704,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[24],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -770,7 +770,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Expand3x3")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=64, Stride=1, Kernel_size=3, N_Filtros=256, offset = 50176,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=64, Stride=1, Kernel_size=3, N_Filtros=256, offset = 50176,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[28],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -788,7 +788,7 @@ def SqueezeNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_s
 
 
 def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_size,frac_size,Classes):
-	print("inicia simulacion")
+	#print("inicia simulacion")
 	ciclos = 0
 	#print("Input")
 	ciclos += Sim_Input_and_Pooling(Activaciones_por_ciclo = 12, N_act = 150528,
@@ -796,7 +796,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 									data_buffer_p = data_buffer_1, duty_p = duty_1, 
 									data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=224, Output_dim_V=224, Output_dim_H = 112, Input_channels=3, Stride=2, Kernel_size=7, N_Filtros=64, 
+	ciclos += Sim_Conv(Input_dim=224, Output_dim_V=112, Output_dim_H = 112, Input_channels=3, Stride=2, Kernel_size=7, N_Filtros=64, 
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[1],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -805,14 +805,14 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 									layer_outputs = np.swapaxes(np.swapaxes(activaciones[2],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 									data_buffer_p = data_buffer_1, duty_p = duty_1, 
 									data_buffer_s = data_buffer_2, duty_s = duty_2)
-	print("Dense 1")
+	#print("Dense 1")
 	#print("Capa Convolucional")
 	ciclos += Sim_Conv(Input_dim=56, Output_dim_V=56, Output_dim_H = 56, Input_channels=64, Stride=1, Kernel_size=1, N_Filtros=128, 
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[3],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 200704,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 200704,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[4],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -827,7 +827,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 301056,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 301056,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[7],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -842,7 +842,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 401408,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 401408,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[10],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -857,7 +857,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 501760,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 501760,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[13],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -872,7 +872,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 602112,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 602112,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[16],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -887,7 +887,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=58, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 702464,
+	ciclos += Sim_Conv(Input_dim=58, Output_dim_V=56, Output_dim_H = 56, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 702464,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[19],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -907,14 +907,14 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 									layer_outputs = np.swapaxes(np.swapaxes(activaciones[22],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 									data_buffer_p = data_buffer_1, duty_p = duty_1, 
 									data_buffer_s = data_buffer_2, duty_s = duty_2)
-	print("Dense 2")
+	#print("Dense 2")
 	#print("Capa Convolucional")
 	ciclos += Sim_Conv(Input_dim=28, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=1, N_Filtros=128, 
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[23],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 100352,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 100352,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[24],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -929,7 +929,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 125440,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 125440,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[27],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -944,7 +944,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 150528,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 150528,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[30],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -959,7 +959,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 175616,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 175616,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[33],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -974,7 +974,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 200704,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 200704,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[36],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -989,7 +989,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 225792,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 225792,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[39],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1004,7 +1004,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 250880,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 250880,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[42],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1019,7 +1019,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 275968,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 275968,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[45],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1034,7 +1034,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 301056,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 301056,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[48],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1049,7 +1049,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 326144,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 326144,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[51],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1064,7 +1064,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 351232,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 351232,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[54],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1079,7 +1079,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=30, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 376320,
+	ciclos += Sim_Conv(Input_dim=30, Output_dim_V=28, Output_dim_H = 28, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 376320,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[57],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1099,14 +1099,14 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 									layer_outputs = np.swapaxes(np.swapaxes(activaciones[60],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 									data_buffer_p = data_buffer_1, duty_p = duty_1, 
 									data_buffer_s = data_buffer_2, duty_s = duty_2)
-	print("Dense 3")
+	#print("Dense 3")
 	#print("Capa Convolucional")
 	ciclos += Sim_Conv(Input_dim=14, Output_dim_V=14, Output_dim_H = 14, Input_channels=256, Stride=1, Kernel_size=1, N_Filtros=128, 
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[61],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 50176,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 50176,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[62],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1121,7 +1121,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 56448,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 56448,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[65],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1136,7 +1136,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 62720,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 62720,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[68],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1151,7 +1151,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 68992,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 68992,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[71],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1166,7 +1166,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 75264,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 75264,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[74],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1181,7 +1181,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 81536,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 81536,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[77],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1196,7 +1196,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 87808,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 87808,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[80],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1211,7 +1211,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 94080,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 94080,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[83],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1226,7 +1226,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 100352,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 100352,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[86],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1241,7 +1241,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 106624,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 106624,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[89],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1256,7 +1256,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 112896,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 112896,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[92],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1271,7 +1271,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 119168,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 119168,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[95],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1286,7 +1286,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 125440,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 125440,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[98],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1301,7 +1301,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 131712,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 131712,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[101],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1316,7 +1316,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 137984,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 137984,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[104],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1331,7 +1331,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 144256,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 144256,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[107],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1346,7 +1346,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 150528,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 150528,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[110],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1361,7 +1361,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 156800,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 156800,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[113],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1376,7 +1376,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 163072,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 163072,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[116],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1391,7 +1391,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 169344,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 169344,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[119],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1406,7 +1406,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 175616,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 175616,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[122],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1421,7 +1421,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 181888,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 181888,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[125],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1436,7 +1436,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 188160,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 188160,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[128],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1451,7 +1451,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=16, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 194432,
+	ciclos += Sim_Conv(Input_dim=16, Output_dim_V=14, Output_dim_H = 14, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 194432,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[131],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1471,14 +1471,14 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 									layer_outputs = np.swapaxes(np.swapaxes(activaciones[134],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 									data_buffer_p = data_buffer_1, duty_p = duty_1, 
 									data_buffer_s = data_buffer_2, duty_s = duty_2)
-	print("Dense 4")
+	#print("Dense 4")
 	#print("Capa Convolucional")
 	ciclos += Sim_Conv(Input_dim=7, Output_dim_V=7, Output_dim_H = 7, Input_channels=512, Stride=1, Kernel_size=1, N_Filtros=128, 
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[135],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 25088,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 25088,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[136],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1493,7 +1493,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 26656,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 26656,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[139],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1508,7 +1508,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 28244,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 28244,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[142],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1523,7 +1523,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 29792,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 29792,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[145],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1538,7 +1538,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 31360,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 31360,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[148],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1553,7 +1553,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 32928,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 32928,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[151],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1568,7 +1568,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 34496,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 34496,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[154],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1583,7 +1583,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 36064,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 36064,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[157],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1598,7 +1598,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 37632,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 37632,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[160],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1613,7 +1613,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 39200,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 39200,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[163],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1628,7 +1628,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 40768,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 40768,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[166],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1643,7 +1643,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 42336,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 42336,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[169],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1658,7 +1658,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 43904,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 43904,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[172],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1673,7 +1673,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 45472,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 45472,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[175],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
@@ -1688,7 +1688,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 47040,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 47040,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[178],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
@@ -1703,7 +1703,7 @@ def DenseNet_Sim(activaciones,data_buffer_1,duty_1,data_buffer_2,duty_2,word_siz
 					  data_buffer_p = data_buffer_1, duty_p = duty_1, 
 					  data_buffer_s = data_buffer_2, duty_s = duty_2)
 	#print("Capa Convolucional")
-	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=9, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 48608,
+	ciclos += Sim_Conv(Input_dim=9, Output_dim_V=7, Output_dim_H = 7, Input_channels=128, Stride=1, Kernel_size=3, N_Filtros=32, offset = 48608,
 					  layer_outputs = np.swapaxes(np.swapaxes(activaciones[181],1,3),2,3).flatten(), word_size = word_size, frac_size = frac_size,
 					  data_buffer_p = data_buffer_2, duty_p = duty_2, 
 					  data_buffer_s = data_buffer_1, duty_s = duty_1)
