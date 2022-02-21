@@ -1,4 +1,4 @@
-# Deep-Learning-Proyect
+# Deep-Learning-Project
 Repository for the proyect of the Digital Design of Embedded Systems course
 
 El proyecto esta desarrollado en base a tensorflow 2.3 y keras.
