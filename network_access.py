@@ -63,4 +63,4 @@ if __name__=='__main__':
 	stats    = {'Read': Data['Reads'],'Writes': Data['Writes']}
 	CNN_gating = pd.DataFrame(stats).reset_index(drop=False)
 	save_obj(Baseline,wgt_dir + '/Baseline_access')
-	save_obj(CNN_gating,wgt_dir + '/CNN_gating_access')
+	save_obj(CNN_gating,wgt_dir + '/gated_CNN_access')

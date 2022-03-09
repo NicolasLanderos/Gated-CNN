@@ -413,7 +413,8 @@ def buffer_simulation(network, dataset, samples, integer_bits, fractional_bits, 
 		buffer  = load_obj(results_dir + 'buffer')
 		cycles  = load_obj(results_dir + 'cycles')
 		config  = load_obj(results_dir + 'config')
-	print('buffer sections: ',list(range(0,buffer['Number of Addresses']+1,buffer['Number of Addresses']//config['Number of switchable sections'])))
+	if CNN_gating:
+		print('buffer sections: ',list(range(0,buffer['Number of Addresses']+1,buffer['Number of Addresses']//config['Number of switchable sections'])))
 	################Simulation Loop########################################################################################################
 	layers = [np.take(network.layers,index) for index in layer_indexes]
 	X = [x for x,y in dataset]

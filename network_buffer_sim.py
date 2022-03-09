@@ -27,8 +27,8 @@ if __name__=='__main__':
                          help='weight fractional part number of bits')
 	parser.add_argument('--wib', metavar='afb', type=int, required = True,
                          help='weight integer part number of bits')
-	parser.add_argument('--CNN_gating', metavar='CNNg', type=bool, required = True,
-                         help='apply or not CNN_gating')
+	parser.add_argument('--gated_CNN', metavar='CNNg', type=bool, required = True,
+                         help='apply or not gated_CNN')
 	args = parser.parse_args()
 	tf.random.set_seed(1234)
 	cwd = os.getcwd()
@@ -87,6 +87,6 @@ if __name__=='__main__':
 		LI = [1,4,8,12,16]
 		AI = [3,7,10,15,19]
 	buffer_simulation(Net,test_set, integer_bits = args.aib, fractional_bits = args.afb, samples = args.samples, start_from = 0,
-                 bit_invertion = False, bit_shifting = False, CNN_gating = args.CNN_gating, write_mode ='default',
+                 bit_invertion = False, bit_shifting = False, CNN_gating = args.gated_CNN, write_mode ='default',
                  results_dir = wgt_dir+'/', buffer_size = 2*args.addressing_space,
                  layer_indexes = LI , activation_indixes = AI)
