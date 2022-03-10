@@ -26,7 +26,7 @@ Example of installation under a conda environment:
 ## Usage:
 
 network_train.py: generates trained weights for the selected network and a train file used in later stages.
- - parameters:
+ - Parameters:
    - --batch: batch size to use during training
    - --dataset: dataset from https://www.tensorflow.org/datasets/catalog/overview
    - --distribution: percentage distribution of training/validation/testing
@@ -36,21 +36,21 @@ network_train.py: generates trained weights for the selected network and a train
  
 network_quantization.py: prints network accuracy and loss for different combinations of integer/fractional parts (in bits) in both activations and weights, 
 varying one and leaving the other part constant.
-  - parameters:
+  - Parameters:
    - --batch: batch size to use during inference
    - --dataset: dataset from https://www.tensorflow.org/datasets/catalog/overview
    - --network_name: network architecture to train (one of the eight architecures used in the analysis)
    - --base_bits: number of bits to be used as base for each part
 
 network_access.py: elaboration of read/write stats on the I/O buffer, under the following assumptions: activation size = address size = 16 bits. Generates two panda dataframes with the results (activating or deactivating the Gated-CNN approach).
-  - parameters:
+  - Parameters:
    - --dataset: dataset from https://www.tensorflow.org/datasets/catalog/overview
    - --network_name: network architecture to train (one of the eight architecures used in the analysis)
    - --addressing_space: number of address in the buffer
    - --samples: number of infered images
 
 network_buffer_sim.py: simulation of buffer stats (number of high cycles, low cycles, off cycles, and flips). Generates periodically a dictionary with the stats.
-  - parameters:
+  - Parameters:
    - --dataset: dataset from https://www.tensorflow.org/datasets/catalog/overview
    - --network_name: network architecture to train (one of the eight architecures used in the analysis)
    - --addressing_space: number of addresses in the buffer
@@ -62,7 +62,7 @@ network_buffer_sim.py: simulation of buffer stats (number of high cycles, low cy
    - --gated_CNN: boolean to apply or not Gated-CNN
     
 network_aging.py: simulation of inference under memory faults. Generates a file with the results.
-  - parameters:
+  - Parameters:
    - --dataset: dataset from https://www.tensorflow.org/datasets/catalog/overview
    - --network_name: network architecture to train (one of the eight architecures used in the analysis)
    - --addressing_space: number of address in the buffer
