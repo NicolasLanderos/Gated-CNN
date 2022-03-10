@@ -69,3 +69,9 @@ network_aging.py: simulation of inference under memory faults. Generates a file 
    - --wgt_faults: true for faults in weight buffer, false for faults in activation buffer
    - --batch: batch size to use during inference
    - --portion: portion of the buffer under faults
+
+## Sources:
+Training.py: Elaboration of dataset iterators.  
+Nets.py: definition of each network used, along with its quantization and aging modeling.  
+Stats.py: definition of accuracy measurement under aging and quantification circumstances.  
+Simulation.py: definition of the buffering simulation routine.
